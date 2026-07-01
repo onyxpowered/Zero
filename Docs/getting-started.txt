@@ -28,10 +28,10 @@ step 2 — start Zero
 
   from the Zero folder:
 
-    zero dev
+    node dist/Engine/Dynamic/Startup/core.js
 
-  Zero will boot, profile your hardware, write information.json,
-  and start watching for modules. you will see something like:
+  Zero boots, profiles your hardware, writes information.json,
+  and starts watching for modules. you will see something like:
 
     [zero] starting...
     [zero] root  → /Users/you/Zero
@@ -39,6 +39,8 @@ step 2 — start Zero
     [zero] ram   → 8.2GB free / 16GB total
     [zero] net   → 192.168.1.42
     [zero] information written
+    [zero/build] ready · 6 engines (node · python · go · ruby · rust · static)
+    [zero/manage] plugboard → :7770
     [zero] ready.
 
 
@@ -56,11 +58,21 @@ step 4 — develop
     cd Apps/my-app
     zero dev
 
-  that is it. Zero handles the rest.
+  Zero detects your project type and starts it with native tooling.
+  changes reload automatically.
+
+
+step 5 — build and deploy
+
+    zero build
+    zero deploy
+
+  Zero detects your language, builds to dist/, and deploys
+  to the target configured in zero.config.ts.
 
 
 next steps
 
   zero help modules    — learn about live modules
-  zero help build      — learn about building for production
+  zero help build      — build and deploy reference
   zero help commands   — full command reference

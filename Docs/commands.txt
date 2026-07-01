@@ -10,23 +10,23 @@ Commands
 
   zero dev
 
-    starts your app in development mode.
-    uses tsx --watch, so changes reload automatically.
-    run from inside an app folder (must have zero.config.ts).
+    starts your app in development mode with hot-reloading.
+    auto-detects your language and uses native tooling.
+    run from inside an app folder.
 
 
   zero build
 
     builds your app for production.
     auto-detects your project type and picks the right engine.
-    powered by Zero Build (coming soon for all languages).
+    supports Node.js, Python, Go, Ruby, Rust, and static sites.
+    output goes to dist/ by default, or --out=path for custom.
 
 
   zero deploy
 
     builds and deploys your app.
-    deployment targets are configured in zero.config.ts.
-    coming with the Zero / Vercel integration.
+    configure your deploy target in zero.config.ts.
 
 
   zero status
@@ -39,8 +39,7 @@ Commands
   zero logs [n]
 
     shows the last n allocation log entries.
-    default is 50.
-    run from anywhere — reads from ~/.zero/throttle.json.
+    default is 50. reads from ~/.zero/throttle.json.
 
 
   zero help [topic]
@@ -53,7 +52,7 @@ Commands
   zero install
 
     registers Zero as a macOS login item via launchd.
-    Zero will start automatically on login and restart if it crashes.
+    Zero starts automatically on login and restarts if it crashes.
     logs go to ~/.zero/logs/.
 
 

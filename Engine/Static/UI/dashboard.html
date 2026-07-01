@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>zero manage</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+
+:root {
+  --bg:      oklch(0.10 0 0);
+  --surface: oklch(0.14 0 0);
+  --border:  oklch(1 0 0 / 8%);
+  --fg:      oklch(0.92 0 0);
+  --muted:   oklch(0.50 0 0);
+  --ok:      oklch(0.72 0.16 145);
+  --warn:    oklch(0.82 0.16 80);
+  --err:     oklch(0.66 0.20 27);
+  --accent:  oklch(0.92 0 0);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: ui-monospace, 'Cascadia Code', 'SF Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.wordmark { font-size: 14px; font-weight: 600; letter-spacing: -0.02em }
+.wordmark span { color: var(--muted) }
+
+#conn-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+}
+#conn-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: background 0.3s;
+}
+#conn-dot.ok   { background: var(--ok) }
+#conn-dot.err  { background: var(--err) }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr 1fr } }
+@media (max-width: 580px) { .grid { grid-template-columns: 1fr } }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+  min-height: 160px;
+}
+
+.panel-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.empty { color: var(--muted); font-size: 11px }
+
+/* processes */
+.proc-row { margin-bottom: 10px }
+.proc-id  { font-weight: 600; margin-bottom: 2px }
+.proc-sub { color: var(--muted); font-size: 11px }
+.worker-badge { display: inline-block; background: oklch(1 0 0 / 6%); border-radius: 3px; padding: 0 4px; font-size: 10px; margin-left: 4px; color: var(--muted) }
+
+.status { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; vertical-align: middle }
+.status.running  { background: var(--ok) }
+.status.crashed  { background: var(--err) }
+.status.stopped  { background: var(--muted) }
+.status.starting { background: var(--warn) }
+
+/* builds */
+.build-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; font-size: 11px }
+.build-app  { font-weight: 600; min-width: 80px }
+.build-meta { color: var(--muted) }
+.build-ok   { color: var(--ok) }
+.build-err  { color: var(--err) }
+.build-cached { color: var(--muted) }
+
+/* resources */
+.res-row { margin-bottom: 12px }
+.res-label { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 11px }
+.res-name  { color: var(--muted) }
+.bar-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden }
+.bar-fill  { height: 100%; border-radius: 2px; background: var(--fg); transition: width 0.4s }
+.bar-fill.warn { background: var(--warn) }
+.bar-fill.crit { background: var(--err) }
+
+/* CDN */
+.cdn-stat { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 11px }
+.cdn-key  { color: var(--muted) }
+.cdn-hit  { color: var(--ok) }
+.cdn-miss { color: var(--muted) }
+.hit-bar-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 8px }
+.hit-bar-fill  { height: 100%; background: var(--ok); border-radius: 2px; transition: width 0.6s }
+
+/* previews */
+.preview-row { margin-bottom: 10px }
+.preview-branch { font-weight: 600 }
+.preview-url    { color: var(--muted); font-size: 11px }
+
+/* modules */
+.mod-row  { margin-bottom: 6px; font-size: 11px }
+.mod-id   { font-weight: 600 }
+.mod-ver  { color: var(--muted); margin-left: 6px }
+.mod-err  { color: var(--err) }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wordmark">zero<span> manage</span></div>
+  <div id="conn-status"><span id="conn-dot"></span><span id="conn-text">connecting…</span></div>
+</header>
+
+<div class="grid">
+  <div class="panel">
+    <div class="panel-title">processes</div>
+    <div id="procs-panel"><span class="empty">no managed processes</span></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">builds</div>
+    <div id="builds-panel"><span class="empty">no builds yet</span></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">resources</div>
+    <div id="resources-panel">
+      <div class="res-row"><div class="res-label"><span class="res-name">cpu</span><span id="cpu-val">—</span></div><div class="bar-track"><div class="bar-fill" id="cpu-bar" style="width:0%"></div></div></div>
+      <div class="res-row"><div class="res-label"><span class="res-name">ram</span><span id="ram-val">—</span></div><div class="bar-track"><div class="bar-fill" id="ram-bar" style="width:0%"></div></div></div>
+      <div class="res-row"><div class="res-label"><span class="res-name">disk</span><span id="disk-val">—</span></div><div class="bar-track"><div class="bar-fill" id="disk-bar" style="width:0%"></div></div></div>
+      <div style="margin-top:14px;font-size:11px;color:var(--muted)" id="throttle-level">—</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">cdn</div>
+    <div id="cdn-panel">
+      <div class="cdn-stat"><span class="cdn-key">hit rate</span><span id="cdn-ratio">—</span></div>
+      <div class="cdn-stat"><span class="cdn-key">hits / misses</span><span id="cdn-hm">—</span></div>
+      <div class="cdn-stat"><span class="cdn-key">cache</span><span id="cdn-cache">—</span></div>
+      <div class="hit-bar-track"><div class="hit-bar-fill" id="hit-bar" style="width:0%"></div></div>
+      <div style="margin-top:10px;font-size:11px;color:var(--muted)" id="cdn-status">waiting for traffic…</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">previews</div>
+    <div id="previews-panel"><span class="empty">no preview deployments</span></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">modules</div>
+    <div id="modules-panel"><span class="empty">no modules loaded</span></div>
+  </div>
+</div>
+
+<script>
+const PORT = location.port || 7770
+const WS   = `ws://${location.hostname}:${PORT}`
+
+// ─── state ───────────────────────────────────────────────────────────────────
+const procs   = new Map()
+const builds  = []
+const modules = new Map()
+const previews = new Map()
+let   tverdict = null
+let   cdnStats = null
+
+// ─── connection ──────────────────────────────────────────────────────────────
+let connectedCount = 0
+const dot  = document.getElementById('conn-dot')
+const text = document.getElementById('conn-text')
+
+function setConnected(up) {
+  if (up) connectedCount++; else connectedCount = Math.max(0, connectedCount - 1)
+  const ok = connectedCount >= 3
+  dot.className = ok ? 'ok' : connectedCount > 0 ? '' : 'err'
+  text.textContent = ok ? 'connected' : connectedCount > 0 ? 'partial' : 'disconnected'
+}
+
+function connect(channel, handler) {
+  const ws = new WebSocket(`${WS}/${channel}`)
+  ws.onopen    = () => setConnected(true)
+  ws.onclose   = () => { setConnected(false); setTimeout(() => connect(channel, handler), 2500) }
+  ws.onerror   = () => setConnected(false)
+  ws.onmessage = e => { try { handler(JSON.parse(e.data)) } catch {} }
+}
+
+// ─── render ──────────────────────────────────────────────────────────────────
+function renderProcs() {
+  const el = document.getElementById('procs-panel')
+  // filter out worker children (shown under coordinator)
+  const top = [...procs.values()].filter(p => !p.id.match(/\.w\d+$/))
+  if (!top.length) { el.innerHTML = '<span class="empty">no managed processes</span>'; return }
+  el.innerHTML = top.map(p => {
+    const workerBadge = p.workers > 1 ? `<span class="worker-badge">×${p.workers}</span>` : ''
+    const sub = p.port ? `port ${p.port} · ` : ''
+    return `<div class="proc-row">
+      <div class="proc-id"><span class="status ${p.status}"></span>${esc(p.id)}${workerBadge}</div>
+      <div class="proc-sub">${sub}${p.mode} · ${p.restarts > 0 ? p.restarts + ' restarts' : p.status}</div>
+    </div>`
+  }).join('')
+}
+
+function renderBuilds() {
+  const el = document.getElementById('builds-panel')
+  if (!builds.length) { el.innerHTML = '<span class="empty">no builds yet</span>'; return }
+  el.innerHTML = builds.slice(-8).reverse().map(b => {
+    if (b.type === 'build.done') {
+      const tag = b.cached ? '<span class="build-cached">cached</span>' : `<span class="build-ok">${fmt(b.duration)}</span>`
+      return `<div class="build-row"><span class="build-app">${esc(b.app)}/${esc(b.part)}</span>${tag}<span class="build-meta">${b.engine} · ${b.files}f</span></div>`
+    }
+    if (b.type === 'build.error') {
+      return `<div class="build-row"><span class="build-app">${esc(b.app)}/${esc(b.part)}</span><span class="build-err">✗ ${esc(b.step)}</span><span class="build-meta">${b.engine}</span></div>`
+    }
+    return `<div class="build-row"><span class="build-app">${esc(b.app)}/${esc(b.part)}</span><span class="build-meta">building…</span></div>`
+  }).join('')
+}
+
+function renderResources() {
+  if (!tverdict) return
+  const hw = tverdict.hardware
+  const set = (id, barId, pct) => {
+    document.getElementById(id).textContent = pct + '%'
+    const bar = document.getElementById(barId)
+    bar.style.width = pct + '%'
+    bar.className = 'bar-fill' + (pct >= 90 ? ' crit' : pct >= 70 ? ' warn' : '')
+  }
+  set('cpu-val', 'cpu-bar', hw.cpu.loadPercent)
+  set('ram-val', 'ram-bar', hw.ram.percentUsed)
+  set('disk-val', 'disk-bar', hw.disk.percentUsed)
+  document.getElementById('throttle-level').textContent = tverdict.level + ' · ' + tverdict.reasons.join(', ')
+}
+
+function renderCDN() {
+  if (!cdnStats) return
+  const { hits, misses, ratio, cacheMB, entries } = cdnStats
+  document.getElementById('cdn-ratio').textContent = ratio + '%'
+  document.getElementById('cdn-hm').textContent    = `${hits} / ${misses}`
+  document.getElementById('cdn-cache').textContent = `${cacheMB}MB · ${entries} entries`
+  document.getElementById('hit-bar').style.width   = ratio + '%'
+  document.getElementById('cdn-status').textContent = ratio >= 80 ? 'excellent cache performance' : ratio >= 50 ? 'good cache performance' : 'warming up…'
+}
+
+function renderPreviews() {
+  const el = document.getElementById('previews-panel')
+  if (!previews.size) { el.innerHTML = '<span class="empty">no preview deployments</span>'; return }
+  el.innerHTML = [...previews.values()].map(p => `
+    <div class="preview-row">
+      <div class="preview-branch">${esc(p.branch)}</div>
+      <div class="preview-url">${esc(p.app)} · ${p.frontendUrl ? `<a href="${esc(p.frontendUrl)}" target="_blank" style="color:var(--ok)">${esc(p.frontendUrl)}</a>` : '—'}</div>
+    </div>`).join('')
+}
+
+function renderModules() {
+  const el = document.getElementById('modules-panel')
+  if (!modules.size) { el.innerHTML = '<span class="empty">no modules loaded</span>'; return }
+  el.innerHTML = [...modules.values()].map(m =>
+    m.error
+      ? `<div class="mod-row mod-err">✗ ${esc(m.id)}  <span style="color:var(--muted)">${esc(m.error)}</span></div>`
+      : `<div class="mod-row"><span class="mod-id">${esc(m.id)}</span><span class="mod-ver">${esc(m.version)}</span></div>`
+  ).join('')
+}
+
+// ─── event handlers ──────────────────────────────────────────────────────────
+connect('procs', e => {
+  if (e.type === 'proc.start')   { const p = procs.get(e.id) ?? { id: e.id, restarts: 0, mode: '?' }; p.pid = e.pid; p.status = 'running'; p.app = e.app; p.part = e.part; procs.set(e.id, p) }
+  if (e.type === 'proc.stop')    { const p = procs.get(e.id); if (p) { p.status = 'stopped'; p.pid = null } }
+  if (e.type === 'proc.crash')   { const p = procs.get(e.id); if (p) { p.status = 'crashed'; p.pid = null; p.restarts = e.restarts } }
+  if (e.type === 'proc.restart') { const p = procs.get(e.id); if (p) { p.status = 'starting'; p.restarts = e.restarts } }
+  if (e.type === 'proc.scale')   { const p = procs.get(e.id); if (p) p.workers = e.workers }
+  renderProcs()
+})
+
+connect('builds', e => {
+  if (e.type === 'build.start' || e.type === 'build.done' || e.type === 'build.error') {
+    builds.push(e); if (builds.length > 50) builds.shift()
+    renderBuilds()
+  }
+})
+
+connect('throttle', e => {
+  tverdict = e
+  renderResources()
+})
+
+connect('cdn', e => {
+  if (e.type === 'cdn.stats') { cdnStats = e; renderCDN() }
+})
+
+connect('modules', e => {
+  if (e.type === 'module.load')  modules.set(e.id, { id: e.id, version: e.version })
+  if (e.type === 'module.error') modules.set(e.id, { id: e.id, error: e.error })
+  renderModules()
+})
+
+// load previews from ~/.zero/deploys.json via a simple fetch
+async function loadPreviews() {
+  try {
+    const res = await fetch('/previews')
+    if (res.ok) {
+      const data = await res.json()
+      previews.clear()
+      for (const r of data) if (r.preview) previews.set(r.branch, r)
+      renderPreviews()
+    }
+  } catch {}
+}
+loadPreviews()
+setInterval(loadPreviews, 30_000)
+
+// ─── utils ───────────────────────────────────────────────────────────────────
+function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;') }
+function fmt(ms) { return ms >= 1000 ? (ms/1000).toFixed(1)+'s' : ms+'ms' }
+</script>
+</body>
+</html>

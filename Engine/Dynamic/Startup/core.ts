@@ -2,6 +2,7 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import os   from 'node:os'
 import fs   from 'node:fs'
+import { execSync } from 'node:child_process'
 import si   from 'systeminformation'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -84,7 +85,7 @@ const toGB = (b: number) => Math.round((b / 1024 ** 3) * 100) / 100
 function locate(cwd: string): RouterInfo {
   const projectRoot   = walkUp(cwd, 'package.json')
   const workspaceRoot = walkUpOpt(projectRoot, 'pnpm-workspace.yaml') ?? projectRoot
-  const zeroRoot      = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..')
+  const zeroRoot      = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..')
   const dataDir       = ZERO_DIR
   const appName       = readName(projectRoot)
   return { cwd, projectRoot, workspaceRoot, zeroRoot, dataDir, appName }
@@ -294,20 +295,77 @@ export async function boot(configOverride?: Partial<ZeroConfig>): Promise<{ info
   return { info, config }
 }
 
+// ─── CLI Install ──────────────────────────────────────────────────────────────
+
+export async function ensureCLI(zeroRoot: string): Promise<void> {
+  const cliDir     = path.join(zeroRoot, 'Engine', 'Dynamic', 'Manage', 'CLI')
+  const cliPkgPath = path.join(cliDir, 'package.json')
+
+  if (!fs.existsSync(cliPkgPath)) {
+    console.warn('[zero/cli] CLI package not found — skipping install')
+    return
+  }
+
+  const { version: targetVersion } = JSON.parse(fs.readFileSync(cliPkgPath, 'utf8')) as { version: string }
+
+  // check what's installed globally
+  let installedVersion = ''
+  try {
+    installedVersion = execSync('zero --version', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim().replace(/^v/, '')
+  } catch { /* not installed */ }
+
+  if (installedVersion === targetVersion) {
+    console.log(`[zero/cli] up to date · v${targetVersion}`)
+    return
+  }
+
+  if (installedVersion) {
+    console.log(`[zero/cli] updating v${installedVersion} → v${targetVersion}`)
+  } else {
+    console.log(`[zero/cli] installing v${targetVersion}`)
+  }
+
+  // build CLI dist first
+  const pm = fs.existsSync(path.join(zeroRoot, 'pnpm-lock.yaml')) ? 'pnpm' : 'npm'
+  try {
+    execSync(`${pm} run build`, { cwd: cliDir, stdio: 'inherit' })
+  } catch {
+    console.warn('[zero/cli] build failed — skipping global install')
+    return
+  }
+
+  // install globally
+  try {
+    execSync(`${pm} add --global .`, { cwd: cliDir, stdio: 'inherit' })
+    console.log(`[zero/cli] installed globally · zero v${targetVersion}`)
+  } catch {
+    // npm fallback
+    try {
+      execSync('npm install --global .', { cwd: cliDir, stdio: 'inherit' })
+      console.log(`[zero/cli] installed globally (npm) · zero v${targetVersion}`)
+    } catch (err) {
+      console.warn('[zero/cli] global install failed:', (err as Error).message)
+    }
+  }
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 const isMain = process.argv[1] === fileURLToPath(import.meta.url)
 
 if (isMain) {
-  const { init: buildInit  } = await import('../Build/core.js')
-  const { init: manageInit } = await import('../Manage/Core/core.js')
+  const { init: buildInit, setManage } = await import('../Build/core.js')
+  const { init: manageInit }           = await import('../Manage/Core/core.js')
 
   const { info, config } = await boot().catch(err => {
     console.error('[zero] fatal:', err)
     process.exit(1)
   })
 
-  await Promise.all([buildInit(info), manageInit(info, config)])
+  await ensureCLI(info.router.zeroRoot)
+
+  const [, manage] = await Promise.all([buildInit(info), manageInit(info, config)])
+  setManage(manage)
 
   console.log('[zero] ready.')
 

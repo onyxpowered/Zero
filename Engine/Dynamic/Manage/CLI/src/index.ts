@@ -32,9 +32,16 @@ function printHelp() {
 
   ${pc.dim('commands:')}
     ${pc.bold('new')} <name>              create a new app
+    ${pc.bold('build')}                   build for production  ${pc.dim('(--no-cache to force)')}
+    ${pc.bold('deploy')}                  deploy app locally    ${pc.dim('(--preview for branch preview)')}
+    ${pc.bold('preview')}                 manage preview deployments  ${pc.dim('ls | rm <branch>')}
+    ${pc.bold('start')} [app] [part]      start app processes  ${pc.dim('(--dev for dev mode)')}
+    ${pc.bold('stop')} <id|app>           stop a process or all parts of an app
+    ${pc.bold('ps')}                      list managed processes
+    ${pc.bold('module')}                  manage remote modules  ${pc.dim('add <url|owner/repo> | ls | rm | update')}
+    ${pc.bold('tunnel')} [port]           expose to internet via Cloudflare  ${pc.dim('(default port 3000)')}
+    ${pc.bold('cache')}                   manage build artifact cache
     ${pc.bold('dev')}                     start in development mode
-    ${pc.bold('build')}                   build for production
-    ${pc.bold('deploy')}                  deploy your app
     ${pc.bold('status')}                  runtime status
     ${pc.bold('logs')} [n]                last n log entries  ${pc.dim('(default 50)')}
     ${pc.bold('install')}                 register as login item  ${pc.dim('(macOS)')}

@@ -2,7 +2,7 @@ Zero
 
 Zero is your local development foundation. it runs on your machine,
 knows your hardware, manages your resources, and handles building and
-deploying your projects — in any language.
+deploying your projects in any language.
 
 it is the beginning of every project. and the last step before it ships.
 
@@ -13,12 +13,15 @@ layers
              reads your network. writes everything it knows to information.json.
              then hands off to Build and Manage.
 
-  Build      compiles and bundles your project. supports every major language.
-             powered by Zero Build. reads from information.json.
+  Build      compiles and bundles your project in any language.
+             Node.js, Python, Go, Ruby, Rust, and static sites.
+             framework detection uses Zero's own engine infrastructure,
+             fully integrated into Zero's build system.
+             Zero controls every step.
 
   Manage     keeps things running. watches your resources. loads modules live
              the moment you drop them in. runs the PlugBoard — Zero's internal
-             communication bus.
+             communication bus over WebSocket.
 
   CLI        the zero command. new, dev, build, deploy, help.
              installed globally. works from anywhere.
@@ -28,8 +31,10 @@ philosophy
 
   Zero has no external server dependencies.
   it talks to your OS and nothing else.
-  it is local-first, always.
-  it is also the deploy layer — from your machine to the world.
+  it is local-first. always.
+
+  it is also the deploy layer —
+  from your machine to the world.
 
 
 see also

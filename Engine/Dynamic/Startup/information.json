@@ -1,1 +1,119 @@
-{}
+{
+  "version": "0.1.0",
+  "timestamp": 1782931971553,
+  "router": {
+    "cwd": "/Users/fischergrant/Zero",
+    "projectRoot": "/Users/fischergrant/Zero",
+    "workspaceRoot": "/Users/fischergrant/Zero",
+    "zeroRoot": "/Users/fischergrant/Zero",
+    "dataDir": "/Users/fischergrant/.zero",
+    "appName": "@zero/engine"
+  },
+  "hardware": {
+    "cpu": {
+      "brand": "M2",
+      "cores": 8,
+      "physicalCores": 8,
+      "speedGHz": 2.4,
+      "loadPercent": 35,
+      "arch": "arm64"
+    },
+    "ram": {
+      "totalGB": 16,
+      "usedGB": 15.45,
+      "freeGB": 5.86,
+      "percentUsed": 63
+    },
+    "gpu": {
+      "controllers": [
+        {
+          "vendor": "Apple",
+          "model": "Apple M2",
+          "vramMB": 0
+        }
+      ]
+    },
+    "disk": {
+      "totalGB": 228.27,
+      "usedGB": 11.66,
+      "freeGB": 131.94,
+      "percentUsed": 5
+    }
+  },
+  "system": {
+    "platform": "darwin",
+    "hostname": "Fischers-MacBook-Air.local",
+    "username": "fischergrant",
+    "homeDir": "/Users/fischergrant",
+    "nodeVersion": "24.18.0"
+  },
+  "network": {
+    "local": [
+      "fe80::1892:9ba6:e4cf:41cd",
+      "2600:4040:1269:8c00:c5e:489e:a4ee:5613",
+      "2600:4040:1269:8c00:8d6c:b125:98bd:9ab1",
+      "192.168.1.207",
+      "fe80::a860:79ff:fe7c:7bef",
+      "fe80::a860:79ff:fe7c:7bef",
+      "fe80::f2cf:2828:274:9eff",
+      "fe80::12ef:33a6:d2f0:2f2c",
+      "fe80::e10c:51d5:136a:dcc7",
+      "fe80::ce81:b1c:bd2c:69e",
+      "fe80::cdc9:f80a:13c3:4760",
+      "fe80::5702:857b:4e23:acae",
+      "fe80::e466:ad86:1f55:1adc",
+      "fe80::89df:65f7:24c0:dfe1",
+      "fe80::25e8:a20a:5f4b:6732",
+      "fe80::3018:a45a:4212:eb99"
+    ],
+    "interfaces": {
+      "en0": [
+        "fe80::1892:9ba6:e4cf:41cd",
+        "2600:4040:1269:8c00:c5e:489e:a4ee:5613",
+        "2600:4040:1269:8c00:8d6c:b125:98bd:9ab1",
+        "192.168.1.207"
+      ],
+      "awdl0": [
+        "fe80::a860:79ff:fe7c:7bef"
+      ],
+      "llw0": [
+        "fe80::a860:79ff:fe7c:7bef"
+      ],
+      "utun4": [
+        "fe80::f2cf:2828:274:9eff"
+      ],
+      "utun5": [
+        "fe80::12ef:33a6:d2f0:2f2c"
+      ],
+      "utun6": [
+        "fe80::e10c:51d5:136a:dcc7"
+      ],
+      "utun7": [
+        "fe80::ce81:b1c:bd2c:69e"
+      ],
+      "utun8": [
+        "fe80::cdc9:f80a:13c3:4760"
+      ],
+      "utun9": [
+        "fe80::5702:857b:4e23:acae"
+      ],
+      "utun10": [
+        "fe80::e466:ad86:1f55:1adc"
+      ],
+      "utun11": [
+        "fe80::89df:65f7:24c0:dfe1"
+      ],
+      "utun12": [
+        "fe80::25e8:a20a:5f4b:6732"
+      ],
+      "utun13": [
+        "fe80::3018:a45a:4212:eb99"
+      ]
+    }
+  },
+  "compat": {
+    "passes": true,
+    "failures": [],
+    "warnings": []
+  }
+}

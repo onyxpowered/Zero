@@ -1,31 +1,48 @@
 Build
 
 Zero Build compiles and bundles any project type.
-it is powered by the same builder infrastructure used by Vercel,
-rebranded and integrated into the Zero runtime.
+it uses Zero's own build engines and framework detection,
+all written and owned by Zero. Zero makes every decision.
+
+
+supported languages
+
+  Node.js / TypeScript    detected via package.json
+  Python                  detected via requirements.txt, pyproject.toml, setup.py
+  Go                      detected via go.mod
+  Ruby                    detected via Gemfile
+  Rust                    detected via Cargo.toml
+  Static sites            detected via index.html (no backend files)
+
+
+detection
+
+  Zero auto-detects your project type. it checks for language markers
+  first, then runs Zero's framework detection to identify the specific
+  framework in use (Next.js, React, Vue, Django, Rails, etc.).
+
+  you never need to configure the engine. Zero picks the right one.
 
 
 usage
 
-  from inside an app folder:
-
-    zero build
-
-  Zero auto-detects your project type and picks the right engine.
-  output goes to dist/ by default.
+  zero build              builds your project to dist/
+  zero build --out=path   builds to a custom output directory
 
 
-supported languages  (coming)
+dev mode
 
-  TypeScript / JavaScript    Node.js
-  Python
-  Go
-  Rust
-  Ruby
-  Static sites
+  zero dev
 
-  engines register themselves with Zero Build at startup.
-  you can write and register custom engines too.
+  runs your project locally with hot-reloading where applicable.
+  each language uses its native tooling:
+
+    Node.js    tsx --watch
+    Python     python (main.py / app.py / server.py)
+    Go         go run .
+    Ruby       ruby app.rb / bundle exec rackup
+    Rust       cargo run
+    Static     built-in HTTP server on :3000
 
 
 deploy
@@ -35,17 +52,27 @@ deploy
   builds your project and ships it.
   deployment targets are configured in zero.config.ts.
 
-  Zero is the Vercel layer — your local machine is the starting point,
-  and Zero handles the last mile to production.
+
+custom engines
+
+  any code can register a build engine at runtime:
+
+    import { register } from '@zero/engine/build'
+
+    register({
+      name:   'my-engine',
+      detect: root => existsSync(join(root, 'my.lock')),
+      build:  async (root, info, opts) => { ... },
+      dev:    async (root, info) => { ... },
+    })
+
+  registered engines take priority over the built-in set.
 
 
 zero.config.ts
 
   every app has a zero.config.ts at its root.
-  this is where you configure build options, deployment targets,
-  resource thresholds, and anything else Zero needs to know.
-
-  example:
+  configure build options, deployment targets, and resource thresholds:
 
     import type { ZeroConfig } from '@zero/engine'
 
@@ -54,6 +81,9 @@ zero.config.ts
       throttle: {
         ram:  { warning: 70, critical: 85 },
         cpu:  { warning: 60, critical: 80 },
+      },
+      deploy: {
+        target: 'zero',
       },
     }
 

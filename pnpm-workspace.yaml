@@ -1,4 +1,7 @@
 packages:
   - "."
   - "Engine/Dynamic/Manage/CLI"
+  - "Engine/Static/UI"
   - "Apps/*"
+allowBuilds:
+  esbuild: true

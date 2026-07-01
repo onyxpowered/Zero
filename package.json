@@ -12,9 +12,29 @@
       "import": "./dist/Engine/Dynamic/Manage/Core/core.js",
       "types":  "./dist/Engine/Dynamic/Manage/Core/core.d.ts"
     },
+    "./manage/procs": {
+      "import": "./dist/Engine/Dynamic/Manage/Core/procs.js",
+      "types":  "./dist/Engine/Dynamic/Manage/Core/procs.d.ts"
+    },
     "./build": {
       "import": "./dist/Engine/Dynamic/Build/core.js",
       "types":  "./dist/Engine/Dynamic/Build/core.d.ts"
+    },
+    "./build/detect": {
+      "import": "./dist/Engine/Dynamic/Build/detect.js",
+      "types":  "./dist/Engine/Dynamic/Build/detect.d.ts"
+    },
+    "./build/cache": {
+      "import": "./dist/Engine/Dynamic/Build/cache.js",
+      "types":  "./dist/Engine/Dynamic/Build/cache.d.ts"
+    },
+    "./build/run": {
+      "import": "./dist/Engine/Dynamic/Build/Internals/run.js",
+      "types":  "./dist/Engine/Dynamic/Build/Internals/run.d.ts"
+    },
+    "./cdn": {
+      "import": "./dist/Engine/Dynamic/CDN/server.js",
+      "types":  "./dist/Engine/Dynamic/CDN/server.d.ts"
     }
   },
   "scripts": {
@@ -26,7 +46,7 @@
   },
   "dependencies": {
     "systeminformation": "^5.22.6",
-    "ws":               "^8.17.0"
+    "ws":                "^8.17.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

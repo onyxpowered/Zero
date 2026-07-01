@@ -16,7 +16,8 @@
   "include": [
     "Engine/Dynamic/Startup/**/*",
     "Engine/Dynamic/Build/**/*",
-    "Engine/Dynamic/Manage/Core/**/*"
+    "Engine/Dynamic/Manage/Core/**/*",
+    "Engine/Dynamic/CDN/**/*"
   ],
   "exclude": [
     "Engine/Dynamic/Manage/CLI",

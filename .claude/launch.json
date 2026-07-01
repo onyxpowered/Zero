@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ClaudesThrone Frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "/Users/fischergrant/Zero/Apps/ClaudesThrone/Frontend",
+      "port": 3000
+    },
+    {
+      "name": "Zero Dashboard",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["tsx", "Engine/Dynamic/Startup/core.ts"],
+      "cwd": "/Users/fischergrant/Zero",
+      "port": 7770
+    }
+  ]
+}
