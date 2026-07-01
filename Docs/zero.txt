@@ -1,0 +1,40 @@
+Zero
+
+Zero is your local development foundation. it runs on your machine,
+knows your hardware, manages your resources, and handles building and
+deploying your projects — in any language.
+
+it is the beginning of every project. and the last step before it ships.
+
+
+layers
+
+  Startup    boots first. maps your filesystem, profiles your hardware,
+             reads your network. writes everything it knows to information.json.
+             then hands off to Build and Manage.
+
+  Build      compiles and bundles your project. supports every major language.
+             powered by Zero Build. reads from information.json.
+
+  Manage     keeps things running. watches your resources. loads modules live
+             the moment you drop them in. runs the PlugBoard — Zero's internal
+             communication bus.
+
+  CLI        the zero command. new, dev, build, deploy, help.
+             installed globally. works from anywhere.
+
+
+philosophy
+
+  Zero has no external server dependencies.
+  it talks to your OS and nothing else.
+  it is local-first, always.
+  it is also the deploy layer — from your machine to the world.
+
+
+see also
+
+  zero help getting-started
+  zero help commands
+  zero help modules
+  zero help build

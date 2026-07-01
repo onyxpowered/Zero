@@ -1,0 +1,66 @@
+Getting Started
+
+before you begin, make sure you have:
+  - Node.js v18 or higher   (nodejs.org)
+  - pnpm                    (pnpm.io)
+
+
+step 1 — install Zero
+
+  clone or download Zero to your machine.
+  open a terminal in the Zero folder and run:
+
+    pnpm install
+    pnpm build
+
+  then install the CLI globally:
+
+    cd Engine/Dynamic/Manage/CLI
+    pnpm build
+    pnpm add -g .
+
+  confirm it worked:
+
+    zero --version
+
+
+step 2 — start Zero
+
+  from the Zero folder:
+
+    zero dev
+
+  Zero will boot, profile your hardware, write information.json,
+  and start watching for modules. you will see something like:
+
+    [zero] starting...
+    [zero] root  → /Users/you/Zero
+    [zero] cpu   → Apple M2 · 8 cores · 12% load
+    [zero] ram   → 8.2GB free / 16GB total
+    [zero] net   → 192.168.1.42
+    [zero] information written
+    [zero] ready.
+
+
+step 3 — create your first app
+
+  in a new terminal:
+
+    zero new my-app
+
+  this creates Apps/my-app with everything you need to start.
+
+
+step 4 — develop
+
+    cd Apps/my-app
+    zero dev
+
+  that is it. Zero handles the rest.
+
+
+next steps
+
+  zero help modules    — learn about live modules
+  zero help build      — learn about building for production
+  zero help commands   — full command reference

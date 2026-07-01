@@ -1,0 +1,37 @@
+{
+  "name": "@zero/engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/Engine/Dynamic/Startup/core.js",
+      "types":  "./dist/Engine/Dynamic/Startup/core.d.ts"
+    },
+    "./manage": {
+      "import": "./dist/Engine/Dynamic/Manage/Core/core.js",
+      "types":  "./dist/Engine/Dynamic/Manage/Core/core.d.ts"
+    },
+    "./build": {
+      "import": "./dist/Engine/Dynamic/Build/core.js",
+      "types":  "./dist/Engine/Dynamic/Build/core.d.ts"
+    }
+  },
+  "scripts": {
+    "build":     "tsc",
+    "dev":       "tsc --watch",
+    "start":     "node dist/Engine/Dynamic/Startup/core.js",
+    "start:dev": "tsx Engine/Dynamic/Startup/core.ts",
+    "clean":     "rm -rf dist"
+  },
+  "dependencies": {
+    "systeminformation": "^5.22.6",
+    "ws":               "^8.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/ws":   "^8.5.10",
+    "tsx":         "^4.0.0",
+    "typescript":  "^5.4.5"
+  }
+}

@@ -1,0 +1,4 @@
+packages:
+  - "."
+  - "Engine/Dynamic/Manage/CLI"
+  - "Apps/*"

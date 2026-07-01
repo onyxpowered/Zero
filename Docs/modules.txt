@@ -1,0 +1,71 @@
+Modules
+
+a Module is a self-contained unit of work that runs inside Zero.
+
+every app in Apps/ has a Modules/ folder. Zero watches it live —
+drop a module in and it loads immediately, no restart needed.
+
+
+writing a module
+
+  create a file in Apps/your-app/Modules/:
+
+    import type { ZeroModule } from '@zero/engine'
+
+    export const MyModule: ZeroModule = {
+      id:      'my-module',
+      version: '0.0.1',
+
+      async boot() {
+        // runs when Zero loads this module
+      },
+
+      async teardown() {
+        // runs when Zero shuts it down
+      },
+
+      onAllocation(a) {
+        // called whenever Zero makes a resource decision for this module
+        // a.granted tells you how much you got
+      },
+
+      bids() {
+        // tell Zero what resources this module needs
+        return [{
+          moduleId:  'my-module',
+          resource:  'ram',
+          requested: 0.5,   // GB
+          priority:  50,    // higher = served first (0–100)
+          reason:    'baseline memory reservation',
+          timestamp: Date.now(),
+        }]
+      },
+    }
+
+  save the file. Zero detects it and boots it immediately.
+
+
+resources
+
+  modules can bid on these resources:
+    ram        amount in GB
+    cpu        percentage (0–100)
+    disk       amount in GB
+    gpu        amount in MB of VRAM
+    bandwidth  percentage (0–100)
+
+
+priorities
+
+  Zero's Throttle arbitrates all bids every poll cycle.
+  higher priority modules are served first.
+  when the machine is under pressure, all grants are scaled down.
+  at critical levels, Zero may shut modules down to protect the system.
+
+
+the lifecycle
+
+  boot()        called once when the module loads
+  teardown()    called when Zero shuts down, or the module is unloaded
+  bids()        called every throttle cycle — return current needs
+  onAllocation  called after each throttle cycle with what was granted

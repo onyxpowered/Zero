@@ -1,0 +1,60 @@
+Build
+
+Zero Build compiles and bundles any project type.
+it is powered by the same builder infrastructure used by Vercel,
+rebranded and integrated into the Zero runtime.
+
+
+usage
+
+  from inside an app folder:
+
+    zero build
+
+  Zero auto-detects your project type and picks the right engine.
+  output goes to dist/ by default.
+
+
+supported languages  (coming)
+
+  TypeScript / JavaScript    Node.js
+  Python
+  Go
+  Rust
+  Ruby
+  Static sites
+
+  engines register themselves with Zero Build at startup.
+  you can write and register custom engines too.
+
+
+deploy
+
+  zero deploy
+
+  builds your project and ships it.
+  deployment targets are configured in zero.config.ts.
+
+  Zero is the Vercel layer — your local machine is the starting point,
+  and Zero handles the last mile to production.
+
+
+zero.config.ts
+
+  every app has a zero.config.ts at its root.
+  this is where you configure build options, deployment targets,
+  resource thresholds, and anything else Zero needs to know.
+
+  example:
+
+    import type { ZeroConfig } from '@zero/engine'
+
+    const config: Partial<ZeroConfig> = {
+      plugPort: 7770,
+      throttle: {
+        ram:  { warning: 70, critical: 85 },
+        cpu:  { warning: 60, critical: 80 },
+      },
+    }
+
+    export default config

@@ -1,0 +1,69 @@
+Commands
+
+  zero new <name>
+
+    creates a new app in the Apps/ folder.
+    scaffolds package.json, tsconfig.json, zero.config.ts,
+    src/index.ts, and Modules/example.ts.
+    runs pnpm install automatically.
+
+
+  zero dev
+
+    starts your app in development mode.
+    uses tsx --watch, so changes reload automatically.
+    run from inside an app folder (must have zero.config.ts).
+
+
+  zero build
+
+    builds your app for production.
+    auto-detects your project type and picks the right engine.
+    powered by Zero Build (coming soon for all languages).
+
+
+  zero deploy
+
+    builds and deploys your app.
+    deployment targets are configured in zero.config.ts.
+    coming with the Zero / Vercel integration.
+
+
+  zero status
+
+    shows the current resource allocation state.
+    reads from ~/.zero/throttle.json.
+    displays per-module RAM, CPU, disk allocations as bar charts.
+
+
+  zero logs [n]
+
+    shows the last n allocation log entries.
+    default is 50.
+    run from anywhere — reads from ~/.zero/throttle.json.
+
+
+  zero help [topic]
+
+    shows documentation.
+    run without a topic to list all available docs.
+    topics: zero, getting-started, commands, modules, build
+
+
+  zero install
+
+    registers Zero as a macOS login item via launchd.
+    Zero will start automatically on login and restart if it crashes.
+    logs go to ~/.zero/logs/.
+
+
+  zero uninstall
+
+    removes the Zero login item.
+    logs remain at ~/.zero/logs/.
+
+
+flags
+
+  -v, --version    print Zero version
+  -h, --help       print help
